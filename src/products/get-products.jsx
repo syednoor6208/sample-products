@@ -1,24 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-//ToDo Remove this variable
-const pList = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
-  name: i + i + "laptop",
-  price: 10.1 + Math.random(),
-}));
-
 export const GetAllProducts = () => {
   //To get state change and set to state variable
-  const [productList, setProductList] = useState(pList);
+  const [productList, setProductList] = useState([]);
   //To get side effects while components is mounting
   useEffect(() => {
     //ToDo Need to uncomment after adding url
-    //fetchProducts();
+    fetchProducts();
   }, []);
   //Fetch products with axios which is external library for request and response.
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("please update get url");
+      const response = await axios.get("http://localhost:8082/products");
       setProductList(response.data);
     } catch (e) {
       console.error("Fetch Product has Issue===>", e);
@@ -37,14 +30,14 @@ export const GetAllProducts = () => {
       </thead>
       <tbody>
         {productList.map((item) => {
-          return <TbodyComponent key={item.id} item={item} />;
+          return <TbodyComponent key={item.id} item={item} fetchProducts={fetchProducts}/>;
         })}
       </tbody>
     </table>
   );
 };
 
-const TbodyComponent = ({ item }) => {
+const TbodyComponent = ({ item,fetchProducts }) => {
   const [state, setState] = useState("view");
   const onChangeToEdit = () => {
     setState("edit");
@@ -53,13 +46,17 @@ const TbodyComponent = ({ item }) => {
     setState("view");
   };
   const onUpdate = async () => {
-    //ToDo uncomment after
-    // await axios.post('http://localhost:8082/products',{...item})
+    
+    await axios.put(`http://localhost:8082/products/${item.id}`,{...item});
+    onCancel();
+    await fetchProducts();
     alert("Document updated Successfully");
   };
   const onDelete = async () => {
     //ToDo uncomment after
-    // await axios.post('http://localhost:8082/products',{...item})
+   await axios.delete(`http://localhost:8082/products/${item.id}`,{...item});
+   onCancel();
+    await fetchProducts();
     alert("Document Deleted Successfully");
   };
   const ViewComponent = () => {

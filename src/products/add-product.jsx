@@ -18,7 +18,10 @@ export const AddProduct = () => {
   };
 
   const onClickSubmit = async () => {
-    await axios.post("", { id, name, price });
+    await axios.post("http://localhost:8082/products", { id, name, price });
+    setId((prev)=>(Number(prev)+1));
+    setName("");
+    setPrice("");
     alert("Document added successfully");
   };
   return (
